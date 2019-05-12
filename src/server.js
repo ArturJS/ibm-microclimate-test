@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
+const deploy = require('./deploy');
 
 const PORT = 3000;
 
@@ -9,10 +10,6 @@ const shouldDeploy = body => {
     console.log({ branch, status, pull_request });
 
     return branch === 'master' && status === 0 && pull_request === false;
-};
-
-const performDeploy = () => {
-    console.log('Deploying...');
 };
 
 const main = () => {
@@ -25,7 +22,7 @@ const main = () => {
             console.log('Received notifications!');
             try {
                 if (shouldDeploy(body)) {
-                    performDeploy();
+                    deploy();
                 }
             } catch (err) {
                 console.log('Deploy fauled: ', err);
