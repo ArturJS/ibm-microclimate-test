@@ -3,6 +3,18 @@ const bodyParser = require('koa-bodyparser');
 
 const PORT = 3000;
 
+const shouldDeploy = body => {
+    const { branch, status, pull_request } = JSON.parse(body.payload);
+
+    console.log({ branch, status, pull_request });
+
+    return branch === 'master' && status === 0 && pull_request === false;
+};
+
+const performDeploy = () => {
+    console.log('Deploying...');
+};
+
 const main = () => {
     const app = new Koa();
 
@@ -11,10 +23,16 @@ const main = () => {
 
         if (url === '/notifications') {
             console.log('Received notifications!');
-            console.log(body);
+            try {
+                if (shouldDeploy(body)) {
+                    performDeploy();
+                }
+            } catch (err) {
+                console.log('Deploy fauled: ', err);
+            }
         }
 
-        ctx.body = 0;
+        ctx.body = 'Ok';
     });
 
     app.listen(3000, () => {
