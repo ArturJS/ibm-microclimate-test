@@ -22,7 +22,7 @@ const main = () => {
             console.log('Received notifications!');
             try {
                 if (shouldDeploy(body)) {
-                    deploy();
+                    await deploy();
                 }
             } catch (err) {
                 console.log('Deploy fauled: ', err);
