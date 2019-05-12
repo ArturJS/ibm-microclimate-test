@@ -1,10 +1,43 @@
-const http = require('http');
+const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200);
-    res.end('Hello from NodeJS! Powered by IBM Microclimate.');
-});
+const PORT = 3000;
 
-server.listen(8080, () => {
-    console.log('NodeJS server is up and running on 8080 port. Enjoy!');
-});
+const shouldDeploy = body => {
+    const { branch, status, pull_request } = JSON.parse(body.payload);
+
+    console.log({ branch, status, pull_request });
+
+    return branch === 'master' && status === 0 && pull_request === false;
+};
+
+const performDeploy = () => {
+    console.log('Deploying...');
+};
+
+const main = () => {
+    const app = new Koa();
+
+    app.use(bodyParser()).use(async ctx => {
+        const { body, url } = ctx.request;
+
+        if (url === '/notifications') {
+            console.log('Received notifications!');
+            try {
+                if (shouldDeploy(body)) {
+                    performDeploy();
+                }
+            } catch (err) {
+                console.log('Deploy fauled: ', err);
+            }
+        }
+
+        ctx.body = 'Ok';
+    });
+
+    app.listen(3000, () => {
+        console.log(`Server is up and running on ${PORT} port!`);
+    });
+};
+
+main();
