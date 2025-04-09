@@ -19,7 +19,7 @@
     },
     "homepage": "https://github.com/ArturJS/ibm-microclimate-test#readme",
     "dependencies": {
-        "koa": "^2.7.0",
+        "koa": "^2.16.1",
         "koa-bodyparser": "^4.2.1"
     }
 }
